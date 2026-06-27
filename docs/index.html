@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Codeでショート動画をつくる（ワークブック）</title>
+<style>
+  :root{
+    --ink:#1F2933; --paper:#FAF9F6; --accent:#D97757; --accent2:#2A9D8F;
+    --muted:#6B7280; --line:#E7E3DC; --soft:#F0EDE7;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:-apple-system,"Hiragino Sans","Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+    line-height:1.8; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:880px; margin:0 auto; padding:0 22px 96px; }
+  header.hero{ background:linear-gradient(135deg,#1F2933,#2b3a47); color:var(--paper); padding:56px 22px; }
+  header.hero .inner{ max-width:880px; margin:0 auto; }
+  header.hero .eyebrow{ color:var(--accent); }
+  header.hero h1{ color:#fff; font-size:34px; margin:.2em 0; line-height:1.3; }
+  header.hero p{ color:#E9C3B4; font-size:17px; margin:.2em 0; }
+  .eyebrow{ font-size:13px; letter-spacing:.18em; color:var(--accent); font-weight:800; }
+  h2{ font-size:27px; border-bottom:4px solid var(--accent); padding-bottom:.18em; margin:1.8em 0 .6em; scroll-margin-top:16px; }
+  h3{ font-size:21px; color:var(--accent2); margin:1.4em 0 .3em; }
+  h4{ font-size:17px; margin:1.1em 0 .2em; }
+  p, li{ font-size:16px; }
+  a{ color:var(--accent2); }
+  strong{ color:var(--accent); }
+  code{ background:var(--soft); padding:.06em .35em; border-radius:6px; font-size:.9em; }
+  ul,ol{ padding-left:1.3em; }
+  li{ margin:.3em 0; }
+  img.fig{ display:block; width:240px; max-width:55%; float:right; margin:0 0 14px 22px;
+    border-radius:16px; box-shadow:0 8px 24px rgba(31,41,51,.13); background:#fff; }
+  .clear{ clear:both; }
+  .do{ background:#EAF6F3; border-left:6px solid var(--accent2); padding:.7em 1em; border-radius:0 12px 12px 0; margin:1em 0; }
+  .warn{ background:#FBEEE8; border-left:6px solid var(--accent); padding:.7em 1em; border-radius:0 12px 12px 0; margin:1em 0; }
+  .term{ display:inline-block; background:#fff; border:2px solid var(--accent); color:var(--accent);
+    border-radius:999px; padding:.02em .7em; font-weight:800; font-size:.85em; margin-right:.2em; }
+  .gloss{ color:var(--muted); }
+  blockquote{ border-left:5px solid var(--accent2); margin:1em 0; padding:.4em 1em; background:#EFF6F4; border-radius:0 10px 10px 0; }
+  table{ border-collapse:collapse; width:100%; margin:1em 0; font-size:15px; }
+  th,td{ border:1px solid var(--line); padding:.5em .7em; text-align:left; vertical-align:top; }
+  th{ background:var(--soft); }
+  .prompt{ position:relative; background:var(--ink); color:#F6F8FA; border-radius:12px; padding:18px 16px 14px; margin:1.1em 0 1.2em;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:14px; line-height:1.65; white-space:pre-wrap; }
+  .prompt::before{ content:"コピペ用プロンプト"; position:absolute; top:-11px; left:14px; background:var(--accent); color:#fff;
+    font-size:11px; font-weight:800; letter-spacing:.05em; padding:.15em .7em; border-radius:999px;
+    font-family:-apple-system,"Hiragino Sans",sans-serif; }
+  .cmd{ background:var(--ink); color:#F6F8FA; border-radius:10px; padding:12px 14px; margin:.6em 0; overflow-x:auto;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:13.5px; line-height:1.6; }
+  .check{ background:#fff; border:1px dashed var(--accent2); border-radius:10px; padding:.4em .8em; font-size:14px; color:#1f6f63; margin:.4em 0 1.4em; }
+  .check::before{ content:"✅ 確認："; font-weight:800; }
+  .toc{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 22px; margin:1.4em 0; }
+  .toc ol{ margin:.3em 0; }
+  .toc a{ text-decoration:none; }
+  .step{ display:inline-block; background:var(--accent2); color:#fff; font-weight:800; font-size:13px;
+    border-radius:999px; padding:.05em .7em; margin-right:.4em; }
+  .small{ font-size:13px; color:var(--muted); }
+  hr{ border:none; border-top:1px solid var(--line); margin:2.2em 0; }
+  .pill{ display:inline-block; background:#fff; border:2px solid var(--accent2); color:var(--accent2);
+    border-radius:999px; padding:.05em .7em; font-weight:800; font-size:13px; margin:0 .3em .3em 0; }
+  .cards{ display:flex; gap:14px; flex-wrap:wrap; margin:1em 0; }
+  .card{ flex:1; min-width:230px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 18px; }
+  .card h4{ margin-top:.2em; color:var(--accent); }
+  footer{ color:var(--muted); font-size:13px; text-align:center; padding:30px 0; }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="inner">
+    <span class="eyebrow">CLAUDE CODE × ショート動画 / ワークブック</span>
+    <h1>Claude Codeでショート動画をつくる<br><span style="font-size:21px;font-weight:500">〜 台本も・素材も・音声も・編集も、AIに頼んで“動く動画”にする 〜</span></h1>
+    <p>この記事だけ見ても、自分のペースで進められます。遅れて来ても、休んだ日があっても大丈夫。</p>
+    <p class="small" style="color:#cdd6dd">スタンス：<strong style="color:#E9C3B4">全部わからなくてOK。1本できれば勝ち。</strong></p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="toc">
+    <strong>目次</strong>
+    <ol>
+      <li><a href="#goal">今日のゴールと3つの型</a></li>
+      <li><a href="#map">最低限の地図（Claude Codeの言葉）</a></li>
+      <li><a href="#setup">準備（道具とカギ＝APIキー）</a></li>
+      <li><a href="#flow">ショート動画ができるまで（共通の流れ）</a></li>
+      <li><a href="#h1">ハンズオン①：静止画ショート</a></li>
+      <li><a href="#h2">ハンズオン②：素材ショート</a></li>
+      <li><a href="#h3">ハンズオン③：切り抜きショート</a></li>
+      <li><a href="#browser">おまけ：ブラウザ自動化</a></li>
+      <li><a href="#prompts">コピペ用プロンプト集</a></li>
+      <li><a href="#glossary">用語ミニ辞典</a></li>
+    </ol>
+  </div>
+
+  <h2 id="goal">1. 今日のゴールと3つの型</h2>
+  <div class="do">
+    <strong>自分の手で、ショート動画を実際に1本書き出すところまで。</strong> 作り方の“3つの型”を、手を動かして体験します。
+  </div>
+  <p>むずかしい契約や公開設定はしません。まずは「自分のPCで動画ファイル（縦型 9:16 の <code>short.mp4</code>）ができる」ところがゴールです。投稿（YouTube連携）は、やりたい人だけ最後に。</p>
+
+  <div class="cards">
+    <div class="card">
+      <h4>① 静止画ショート</h4>
+      <p class="small">AIイラスト＋ナレーション。Gemini「nanobanana」で絵を生成して並べる。</p>
+      <span class="pill">アニメ調・偉人伝・雑学</span>
+    </div>
+    <div class="card">
+      <h4>② 素材ショート</h4>
+      <p class="small">ストック動画＋ナレーション。Pexels/Pixabay/Envato の映像を組み合わせる。</p>
+      <span class="pill">解説・TOP5・ニュース</span>
+    </div>
+    <div class="card">
+      <h4>③ 切り抜きショート</h4>
+      <p class="small">長い動画から名場面を縦型に。文字起こし→いいとこ抽出→字幕。</p>
+      <span class="pill">対談・講義・Q&A</span>
+    </div>
+  </div>
+
+  <p>どの型も、流れは同じ「<strong>Skillを呼ぶ → 構成を確認 → 生成 → 自分の目でチェック →（必要なら）投稿</strong>」です。違うのは<strong>素材をどこから持ってくるか</strong>だけ。</p>
+
+  <table>
+    <tr><th>時間の目安</th><th>内容</th></tr>
+    <tr><td>0:15</td><td>最低限の地図（Claude Codeの言葉と仕組み）</td></tr>
+    <tr><td>0:15</td><td>準備（アプリ・APIキー・IrodoriTTS起動）</td></tr>
+    <tr><td>0:45</td><td>ハンズオン①：静止画ショート（全員でしっかり）</td></tr>
+    <tr><td>0:30</td><td>ハンズオン②：素材ショート</td></tr>
+    <tr><td>0:30</td><td>ハンズオン③：切り抜きショート</td></tr>
+    <tr><td>0:15</td><td>ブラウザ自動化・まとめ・質問</td></tr>
+  </table>
+  <p class="small">正直な注意：3時間に全部を“完璧に”は入りません。①を全員で完走 →②③は要点デモ＋各自トライ、が現実的です。<strong>①で「作れた！」を持ち帰るのが最優先。</strong></p>
+
+  <hr>
+
+  <h2 id="map">2. 最低限の地図（Claude Codeの言葉）</h2>
+  <p>用語は「使う直前に1個ずつ」。それぞれ、ひとことの言い換え＋たとえで覚えれば十分です。</p>
+
+  <img class="fig" src="img/llm.png" alt="本に囲まれた物知りな助手のイラスト">
+  <h3>Claude Code って何？</h3>
+  <p><span class="term">LLM</span><span class="gloss">ネットの文章を大量に読んだ“物知りな助手”</span><br>
+  <span class="term">Claude</span><span class="gloss">その助手のひとり（Anthropic社製）</span><br>
+  <span class="term">Claude Code</span><span class="gloss">その助手に“手”を付けたもの</span></p>
+  <p>ふつうのAIチャットは「答えを言う」だけ。<strong>Claude Code は、あなたのPCを実際に操作して、ファイルを作ったり、動画を書き出したりできます。</strong>素材集め→音声生成→編集→書き出しまで、通しで手を動かしてくれるのがポイント。</p>
+  <div class="clear"></div>
+
+  <h3>覚えておきたい4つの言葉</h3>
+  <table>
+    <tr><th>言葉</th><th>ひとことで</th><th>たとえ</th></tr>
+    <tr><td><span class="term">Context window</span></td><td>いま同時に覚えていられる量</td><td>作業机の広さ。埋まると古い話を忘れる</td></tr>
+    <tr><td><span class="term">Agentic loop</span></td><td>考える→やる→確認→直す を自分で繰り返す</td><td>自走する職人。だから「止める・確認」が大事</td></tr>
+    <tr><td><span class="term">MCP</span></td><td>外部サービスに挿すコネクタ</td><td>AI用のUSB端子。素材サイトやブラウザに挿す</td></tr>
+    <tr><td><span class="term">Skills</span></td><td>よく使う作業手順書のパック</td><td>レシピ集。<code>/</code> で呼び出せる</td></tr>
+  </table>
+  <div class="do"><strong>Context window のコツ：</strong>話が長くなって反応が変だと思ったら、新しいセッションで「今やりたいこと」だけ伝え直す。机を片付ける感覚です。</div>
+  <p class="small">おまけ：<span class="term">Agent / サブエージェント</span> という言葉も出てきます。大きな作業を別の“担当者”に分けて並行で進める仕組み。私たちは結果を受け取るだけでOK。Skillsの中で自動的に使われることがあります。</p>
+
+  <h3>得意なこと・苦手なこと</h3>
+  <p><strong>得意：</strong>素材集め・音声生成・編集の自動化／決まった手順のくり返し／試作を速く／「ちょっと直して」を何度でも。</p>
+  <div class="warn"><strong>苦手：</strong>あいまいな丸投げ、細かい“感性の最終調整”、最新すぎる情報、権利関係の自動判断。→ <strong>具体的に頼む・できた素材は自分の目で確認する</strong>のが大事。特に<strong>著作権／利用規約は人間が最終チェック</strong>。</div>
+
+  <hr>
+
+  <h2 id="setup">3. 準備（道具とカギ＝APIキー）</h2>
+  <p>道具（Claude Code・Remotion・IrodoriTTS・素材取得）は<strong>プロジェクトに最初から入っています</strong>。みなさんがやるのは「動かすカギ（APIキー）」を入れることと、音声エンジンを起動することだけ。</p>
+
+  <h3>APIキーとは</h3>
+  <p><span class="term">APIキー</span><span class="gloss">外部サービスを使うための“合言葉”</span> もらった合言葉を <code>.env</code>（環境設定ファイル）に貼り付けておくと、あとはClaudeが自動で使ってくれます。</p>
+  <div class="warn"><strong>合言葉＝あなたの財布。</strong>人に見せない・SNSに貼らない・GitHubに上げない。（<code>.env</code> は最初からアップロード除外に設定済みです。）</div>
+
+  <h3>用途別・今日そろえるカギ</h3>
+  <table>
+    <tr><th>用途</th><th>カギ / 道具</th><th>メモ</th></tr>
+    <tr><td>🎨 画像生成（①）</td><td><code>GEMINI_API_KEY</code></td><td>Gemini 2.5 Flash Image（通称 nanobanana）。取得：<a href="https://aistudio.google.com/apikey">aistudio.google.com/apikey</a></td></tr>
+    <tr><td>🎞️ 動画素材（②）</td><td>Pexels / Pixabay（任意・無料）</td><td>Envato は有料で高品質。素材取得に使用</td></tr>
+    <tr><td>🗣️ 音声（①②）</td><td>IrodoriTTS</td><td>ローカルで動く。無料・回数制限なし。キー不要、起動するだけ</td></tr>
+    <tr><td>📝 文字起こし（③）</td><td><code>OPENAI_API_KEY</code></td><td>切り抜きの文字起こし（Whisper）で使用</td></tr>
+    <tr><td>⬆️ 投稿（任意）</td><td>YouTube OAuth</td><td>投稿したい人だけ。最初の1回だけブラウザで許可</td></tr>
+  </table>
+  <div class="do">詰まっても大丈夫。<strong>カギが1つ（GEMINI_API_KEY）入れば①は動きます。</strong>まず①を全員で完走しましょう。</div>
+
+  <h3>IrodoriTTS（ナレーション音声）</h3>
+  <p><span class="term">IrodoriTTS</span><span class="gloss">文章を“しゃべり声”に変える、手元で動く音声エンジン</span></p>
+  <ul>
+    <li><strong>無料・回数制限なし</strong>（自分のPCの中で動くので、クラウドの料金がかからない）</li>
+    <li>声の雰囲気を<strong>言葉で指定</strong>できる（例：「明るく聞き取りやすい男性の語り口で、好奇心と驚きを込めて」）</li>
+    <li><strong>参照音声</strong>を使うと、動画ごとに声がブレない（同じ声で統一）</li>
+    <li>読み間違いは、台本のその語を<strong>ひらがな</strong>に直せば直る（例：後の世 → のちの世）</li>
+  </ul>
+  <p>使う前に一度だけ「起動」しておけばOK。あとはClaudeが各セリフを自動で音声化します。起動の合言葉が分からなければ、Claudeに「IrodoriTTSを起動して」と頼めば手順を案内してくれます。</p>
+  <div class="check">「①のテーマを伝えて、構成案が返ってくる」ところまで来たら準備OK。</div>
+
+  <hr>
+
+  <h2 id="flow">4. ショート動画ができるまで（共通の流れ）</h2>
+  <p>どの型でも、工程は同じ4つです。</p>
+  <ol>
+    <li><strong>台本</strong>：何を話すか（構成・ナレーション文）</li>
+    <li><strong>素材</strong>：絵や映像（①AI生成 ／ ②ストック ／ ③元動画から切り出し）</li>
+    <li><strong>音声</strong>：ナレーション（IrodoriTTS）</li>
+    <li><strong>合成</strong>：1本の動画に（Remotion / ffmpeg）。字幕・テロップ・BGMも自動</li>
+  </ol>
+  <p><span class="term">Remotion</span><span class="gloss">“コードで動画を組み立てる”仕組み。編集ソフトの代わり</span> タイムラインを手で並べる代わりに、設定（テキスト）から動画を生成します。同じ型で量産でき、やり直しが一瞬。<strong>コードを書くのはClaudeで、みなさんは書きません。</strong>「編集ソフトを自動操作してくれる人がいる」くらいの感覚でOK。</p>
+
+  <hr>
+
+  <h2 id="h1">5. ハンズオン①：静止画ショート</h2>
+  <p>AIイラスト＋ナレーション。使うSkillは <code>youtube-shorts</code>（アニメ調・静止画）。「アニメ調で作って」と言えば呼ばれます。</p>
+  <p class="small">仕組み：構成案（6コマの台本）→ nanobanana で画像生成（1コマ1枚・縦型）→ IrodoriTTS で音声 → 字幕＋BGMで合成 → 9:16 の <code>short.mp4</code>。画像は1枚あたり数円、6枚で十数円ほど。</p>
+
+  <h4><span class="step">STEP 1</span>テーマを伝える</h4>
+  <div class="prompt">アニメ調の静止画ショートを作りたい。テーマは「スティーブ・ジョブズが風呂に入らなかった話」。
+まず6コマ分の構成（各コマの場面＋ナレーション文）を提案して。</div>
+
+  <h4><span class="step">STEP 2</span>構成案を直す（ここが一番ラク）</h4>
+  <p>絵を作る前に台本を固めます。「3コマ目のナレーションをもっと短く」「オチをはっきりさせて」など、言葉で直します。</p>
+  <div class="check">コマ割りとナレーションに納得できたか。ここで固めるほど後がスムーズ。</div>
+
+  <h4><span class="step">STEP 3</span>「OK」で生成 → 確認</h4>
+  <p>「この構成でOK。画像と音声を作って動画にして」と伝えると、画像→音声→合成まで自動で進みます。出てきた <code>short.mp4</code> を<strong>必ず自分の目で再生</strong>。</p>
+
+  <h4><span class="step">STEP 4</span>気になる所だけ直す</h4>
+  <ul>
+    <li>絵が気に入らない →「3番だけ作り直して。もっと夜の雰囲気で」</li>
+    <li>声が硬い →「ナレーションをもっと明るい語り口に」</li>
+    <li>読み間違い → 台本のその語を<strong>ひらがな</strong>に直す</li>
+  </ul>
+  <div class="warn">実在の人物・ブランドのAI画像は<strong>“そっくり”を避け、雰囲気で</strong>。投稿時は各プラットフォームのルールも確認しましょう。</div>
+
+  <hr>
+
+  <h2 id="h2">6. ハンズオン②：素材ショート</h2>
+  <p>ストック動画＋ナレーション。使うSkillは <code>stock-video-shorts</code>（このリポジトリの<strong>おすすめ既定</strong>）。型は2つ：<strong>concept-explainer</strong>（1テーマ解説）と <strong>remotion-toplist</strong>（TOP5ランキング）。</p>
+  <p class="small">仕組み：構成案 → Pexels等から映像を英語キーワードで自動取得 → IrodoriTTS で音声 → Remotion で字幕・アイコン・テロップ込みに合成 → 縦型 <code>short.mp4</code>。</p>
+
+  <h4><span class="step">STEP 1</span>テーマ＋型を伝える</h4>
+  <div class="prompt">ストック動画で TOP5 ショートを作って。テーマは「世界一大きい動物 TOP5」。
+まず構成案（各順位の名前・数値・ナレーション・映像の検索ワード）を出して。</div>
+
+  <h4><span class="step">STEP 2</span>構成を確認 → 生成</h4>
+  <p>順位・数値・ナレーション・検索ワードを確認して「OK」。ストック動画の取得→音声→Remotion合成まで自動で進みます。</p>
+
+  <h4><span class="step">STEP 3</span>確認・差し替え</h4>
+  <p>「3位の映像が地味」→ 検索キーワードを変えて差し替え。「タイトルの色を変えて」なども言葉でOK。</p>
+  <div class="check">縦型 <code>short.mp4</code> を再生して、映像と字幕・ナレーションが合っているか。</div>
+
+  <h3>②の強み：著作権と量産</h3>
+  <ul>
+    <li>素材は<strong>正規のストックサービス</strong>から取得 → 商用利用の見通しが立てやすい</li>
+    <li>コストが<strong>ほぼ定額</strong>（無料API or 月額）→ 本数を増やしても安い</li>
+    <li>同じ型で<strong>横展開しやすい</strong>（TOP5を別テーマで量産）</li>
+  </ul>
+  <div class="warn">ライセンスは<strong>型ごと・素材ごと</strong>に違います。Pexels/Pixabay は寛容ですが、<strong>最終確認は人間</strong>。特に収益化・商用で使うなら、各サービスの利用規約をその都度チェック。</div>
+
+  <hr>
+
+  <h2 id="h3">7. ハンズオン③：切り抜きショート</h2>
+  <p>長い動画から“名場面”を縦型に。使うSkillは <code>youtube-clipper</code>（別リポジトリ <code>claude-code-clip-video</code>）。対談・講義・Q&A に向きます。</p>
+  <p class="small">仕組み：元動画をダウンロード → Whisper で文字起こし（秒単位の字幕データ）→ <strong>★Claude本人が文字起こしを読んで40〜60秒の名場面を選ぶ</strong> → 顔寄せ＋字幕で 9:16 に書き出し。</p>
+  <div class="do"><strong>ここが面白いポイント：</strong>“バズりスコア”のような自動採点ではありません。Claudeが「最初の2秒でフックがある／話が一つで完結している」という基準で、<strong>選んだ理由を説明しながら</strong>切り抜きを提案します。</div>
+
+  <h4><span class="step">STEP 1</span>元動画を渡す</h4>
+  <div class="prompt">この動画 https://youtu.be/… から、40〜60秒の切り抜きショートを3本作りたい。
+文字起こしして、フックの強い場面を「選んだ理由」つきで提案して。</div>
+
+  <h4><span class="step">STEP 2</span>候補を選ぶ → 書き出し</h4>
+  <p>提案された候補から採用するものを選ぶと、<strong>縦型・顔寄せ・字幕入り</strong>で書き出されます。自動で付く処理：</p>
+  <ul>
+    <li><strong>カラオケ字幕</strong>：今しゃべっている言葉が黄色くハイライト</li>
+    <li><strong>顔追従＋ズーム</strong>：話者の顔を中央に寄せて縦型にトリミング</li>
+    <li><strong>間（ま）のカット</strong>：無音や「えーと・あの」を自動で詰められる</li>
+    <li><strong>結論先出し</strong>：オチを冒頭に持ってくる構成も指定できる</li>
+  </ul>
+
+  <h4><span class="step">STEP 3</span>確認してから公開</h4>
+  <p>出力は最初<strong>非公開</strong>で書き出し → <code>short.mp4</code> を確認してから公開判断、が安全です。</p>
+  <div class="warn"><strong>権利の大前提：</strong>他人の動画を切り抜くには<strong>許諾が必要</strong>です。自分の動画、または許可・契約のある素材で行いましょう。</div>
+  <p class="small">補足：このSkillには話者タイプ別の派生（<code>clipper-explainer</code>＝一人語り・講義向け、<code>clipper-qa</code>＝Q&A・質問コーナー向け）もあります。文字起こしには <code>OPENAI_API_KEY</code> が必要です。</p>
+
+  <hr>
+
+  <h2 id="browser">8. おまけ：ブラウザ自動化</h2>
+  <img class="fig" src="img/mcp.png" alt="ブラウザを自動操作するAIのイラスト">
+  <p><span class="term">Agent browser</span><span class="gloss">AIが人の代わりにブラウザを開いて操作する仕組み</span> 画面を見てクリック・入力・スクロール・スクリーンショットができます。Claude Code に“ブラウザの手”を足すイメージ（MCPの一種。Claude in Chrome 拡張や Playwright MCP など）。</p>
+  <h3>動画制作での使い道</h3>
+  <ul>
+    <li><strong>ネタ・トレンド集め</strong>：急上昇やコメントを一覧化（「このページの上位10件を表に」）</li>
+    <li><strong>素材さがし</strong>：素材サイトを横断して候補を収集</li>
+    <li><strong>投稿まわりの下ごしらえ</strong>：タイトル・説明文の下書き入力（最終送信は人がチェック）</li>
+  </ul>
+  <div class="clear"></div>
+  <div class="warn">マナー：<strong>少量・学習目的</strong>で。相手サイトの規約・回数制限に配慮（大量取得しない）。自動“送信・投稿”は事故のもと →<strong>下書きまで＝人が最後に確認</strong>が安全です。</div>
+
+  <hr>
+
+  <h2 id="prompts">9. コピペ用プロンプト集</h2>
+  <p>そのまま貼って使えます。<code>「」</code>の中身を自分のテーマに変えるだけ。</p>
+
+  <h4>① 静止画ショート</h4>
+  <div class="prompt">アニメ調の静止画ショートを作りたい。テーマは「__ここにテーマ__」。
+まず6コマ分の構成（各コマの場面＋ナレーション文）を提案して。
+OKを出したら、画像と音声を作って 9:16 の動画にまとめて。</div>
+
+  <h4>② 素材ショート（TOP5）</h4>
+  <div class="prompt">ストック動画で TOP5 ショートを作って。テーマは「__ここにテーマ__ TOP5」。
+まず構成案（各順位の名前・数値・ナレーション・映像の検索ワード）を出して。
+確認後、素材取得から Remotion 合成まで進めて。</div>
+
+  <h4>② 素材ショート（1テーマ解説）</h4>
+  <div class="prompt">ストック動画で「__ここにテーマ__」を30秒で解説するショートを作って。
+concept-explainer の型で、シーン構成・ナレーション・映像の検索ワードをまず提案して。</div>
+
+  <h4>③ 切り抜きショート</h4>
+  <div class="prompt">この動画 __URL__ から、40〜60秒の切り抜きショートを3本作りたい。
+文字起こしして、フックの強い場面を「選んだ理由」つきで提案して。
+採用したものは、顔寄せ＋字幕つきの縦型で、まず非公開として書き出して。</div>
+
+  <h4>直すときの言い回し</h4>
+  <ul>
+    <li>「<strong>3番だけ</strong>作り直して。もっと__こんな雰囲気__で」</li>
+    <li>「ナレーションを<strong>もっと__明るい/落ち着いた__語り口</strong>に」</li>
+    <li>「<strong>__この語__をひらがな</strong>にして読み間違いを直して」</li>
+    <li>「<strong>いったん止めて。</strong>今の構成だけ見せて」</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="glossary">10. 用語ミニ辞典</h2>
+  <table>
+    <tr><th>用語</th><th>ひとことで（たとえ）</th></tr>
+    <tr><td>LLM</td><td>ネットの文章を大量に読んだ物知りな助手</td></tr>
+    <tr><td>Claude / Claude Code</td><td>助手のひとり（Claude）／その助手に“手”を付けたもの（Code）</td></tr>
+    <tr><td>Context window</td><td>いま同時に覚えていられる量。作業机の広さ</td></tr>
+    <tr><td>Agentic loop</td><td>考える→やる→確認→直す を自分で繰り返す（自走）</td></tr>
+    <tr><td>MCP</td><td>外部サービスに挿すコネクタ。AI用のUSB端子</td></tr>
+    <tr><td>Skills</td><td>よく使う作業手順書のパック。<code>/</code> で呼べる</td></tr>
+    <tr><td>Agent / サブエージェント</td><td>仕事を任せられるAIの担当者／一部を別の担当に丸投げする仕組み</td></tr>
+    <tr><td>API / APIキー</td><td>外部サービスの窓口／それを使う“合言葉”</td></tr>
+    <tr><td>Remotion</td><td>コードで動画を組み立てる仕組み。編集ソフトの代わり</td></tr>
+    <tr><td>IrodoriTTS</td><td>文章をしゃべり声に変える、手元で動く音声エンジン</td></tr>
+    <tr><td>nanobanana</td><td>画像生成AI（Gemini 2.5 Flash Image）の通称</td></tr>
+    <tr><td>ストック動画</td><td>Pexels/Pixabay/Envato 等が提供する、使える映像素材</td></tr>
+    <tr><td>Whisper</td><td>音声を文字に起こすAI（切り抜きで使用）</td></tr>
+    <tr><td>9:16 / ショート</td><td>縦型の短い動画（YouTube Shorts / TikTok / Reels）</td></tr>
+    <tr><td>セッション</td><td>Claudeとの一回のやり取りのまとまり。長くなったら新しく始める</td></tr>
+  </table>
+
+  <div class="do">最後にもう一度だけ。<strong>「全部わからなくてOK。1本できれば勝ち。」</strong>まず1本出して、回しながら良くしていきましょう。</div>
+
+</div>
+
+<footer>
+  Claude Code でショート動画をつくる — ワークブック（復習・自習用）/ スライド版は <code>slide/slides.html</code>
+</footer>
+
+</body>
+</html>
