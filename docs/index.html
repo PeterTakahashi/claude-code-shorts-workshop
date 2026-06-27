@@ -65,6 +65,12 @@
   .cards{ display:flex; gap:14px; flex-wrap:wrap; margin:1em 0; }
   .card{ flex:1; min-width:230px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px 18px; }
   .card h4{ margin-top:.2em; color:var(--accent); }
+  .gallery{ display:flex; gap:16px; flex-wrap:wrap; margin:1.2em 0; }
+  .gallery a{ flex:1; min-width:170px; text-decoration:none; color:var(--ink); display:block; }
+  .gallery img{ width:100%; border-radius:12px; box-shadow:0 6px 18px rgba(31,41,51,.16); display:block; border:1px solid var(--line); }
+  .gallery .cap{ display:block; font-size:14px; line-height:1.35; margin-top:.4em; color:var(--ink); }
+  .gallery .views{ display:block; font-size:13px; color:var(--accent); font-weight:800; margin-top:.1em; }
+  .gallery a:hover .cap{ color:var(--accent2); }
   footer{ color:var(--muted); font-size:13px; text-align:center; padding:30px 0; }
 </style>
 </head>
@@ -175,15 +181,15 @@
   <table>
     <tr><th>用途</th><th>カギ / 道具</th><th>メモ</th></tr>
     <tr><td>🎨 画像生成（①）</td><td><code>GEMINI_API_KEY</code></td><td>Gemini 2.5 Flash Image（通称 nanobanana）。取得：<a href="https://aistudio.google.com/apikey">aistudio.google.com/apikey</a></td></tr>
-    <tr><td>🎞️ 動画素材（②）</td><td>Pexels / Pixabay（任意・無料）</td><td>Envato は有料で高品質。素材取得に使用</td></tr>
-    <tr><td>🗣️ 音声（①②）</td><td>IrodoriTTS</td><td>ローカルで動く。無料・回数制限なし。キー不要、起動するだけ</td></tr>
-    <tr><td>📝 文字起こし（③）</td><td><code>OPENAI_API_KEY</code></td><td>切り抜きの文字起こし（Whisper）で使用</td></tr>
+    <tr><td>🎞️ 動画素材（②）</td><td><a href="https://www.pexels.com/" target="_blank" rel="noopener">Pexels</a> / <a href="https://pixabay.com/" target="_blank" rel="noopener">Pixabay</a>（任意・無料）</td><td><a href="https://elements.envato.com/" target="_blank" rel="noopener">Envato</a> は有料で高品質。素材取得に使用</td></tr>
+    <tr><td>🗣️ 音声（①②）</td><td><a href="https://huggingface.co/Aratako/Irodori-TTS-500M-v2" target="_blank" rel="noopener">IrodoriTTS</a></td><td>ローカルで動く。無料・回数制限なし。キー不要、起動するだけ</td></tr>
+    <tr><td>📝 文字起こし（③）</td><td><code>OPENAI_API_KEY</code></td><td>切り抜きの文字起こし（<a href="https://github.com/openai/whisper" target="_blank" rel="noopener">Whisper</a>）で使用</td></tr>
     <tr><td>⬆️ 投稿（任意）</td><td>YouTube OAuth</td><td>投稿したい人だけ。最初の1回だけブラウザで許可</td></tr>
   </table>
   <div class="do">詰まっても大丈夫。<strong>カギが1つ（GEMINI_API_KEY）入れば①は動きます。</strong>まず①を全員で完走しましょう。</div>
 
   <h3>IrodoriTTS（ナレーション音声）</h3>
-  <p><span class="term">IrodoriTTS</span><span class="gloss">文章を“しゃべり声”に変える、手元で動く音声エンジン</span></p>
+  <p><a href="https://huggingface.co/Aratako/Irodori-TTS-500M-v2" target="_blank" rel="noopener"><span class="term">IrodoriTTS</span></a><span class="gloss">文章を“しゃべり声”に変える、手元で動く音声エンジン</span></p>
   <ul>
     <li><strong>無料・回数制限なし</strong>（自分のPCの中で動くので、クラウドの料金がかからない）</li>
     <li>声の雰囲気を<strong>言葉で指定</strong>できる（例：「明るく聞き取りやすい男性の語り口で、好奇心と驚きを込めて」）</li>
@@ -203,7 +209,7 @@
     <li><strong>音声</strong>：ナレーション（IrodoriTTS）</li>
     <li><strong>合成</strong>：1本の動画に（Remotion / ffmpeg）。字幕・テロップ・BGMも自動</li>
   </ol>
-  <p><span class="term">Remotion</span><span class="gloss">“コードで動画を組み立てる”仕組み。編集ソフトの代わり</span> タイムラインを手で並べる代わりに、設定（テキスト）から動画を生成します。同じ型で量産でき、やり直しが一瞬。<strong>コードを書くのはClaudeで、みなさんは書きません。</strong>「編集ソフトを自動操作してくれる人がいる」くらいの感覚でOK。</p>
+  <p><a href="https://www.remotion.dev/" target="_blank" rel="noopener"><span class="term">Remotion</span></a><span class="gloss">“コードで動画を組み立てる”仕組み。編集ソフトの代わり</span> タイムラインを手で並べる代わりに、設定（テキスト）から動画を生成します。同じ型で量産でき、やり直しが一瞬。<strong>コードを書くのはClaudeで、みなさんは書きません。</strong>「編集ソフトを自動操作してくれる人がいる」くらいの感覚でOK。</p>
 
   <hr>
 
@@ -230,6 +236,26 @@
   </ul>
   <div class="warn">実在の人物・ブランドのAI画像は<strong>“そっくり”を避け、雰囲気で</strong>。投稿時は各プラットフォームのルールも確認しましょう。</div>
 
+  <h4>①の実例（クリックで再生）</h4>
+  <div class="gallery">
+    <a href="https://youtube.com/shorts/LZBgDaeRwcU" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/LZBgDaeRwcU/hqdefault.jpg" alt="1990円フリースで社会現象を起こした男">
+      <span class="cap">1990円フリースで社会現象を起こした男</span>
+      <span class="views">▶ 8,832 回</span>
+    </a>
+    <a href="https://youtube.com/shorts/BfcNnLQDvv0" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/BfcNnLQDvv0/hqdefault.jpg" alt="刑務所で1000冊読んだ男">
+      <span class="cap">刑務所で1000冊読んだ男</span>
+      <span class="views">▶ 5,198 回</span>
+    </a>
+    <a href="https://youtube.com/shorts/AdqXXJzcSN4" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/AdqXXJzcSN4/hqdefault.jpg" alt="カモノハシは生物学の常識を全部破る動物">
+      <span class="cap">カモノハシは、生物学の常識を全部破る動物</span>
+      <span class="views">▶ 5,104 回</span>
+    </a>
+  </div>
+  <p class="small">アニメ調の静止画＋ナレーション。出典：<a href="https://github.com/PeterTakahashi/claude-code-gen-shorts">claude-code-gen-shorts</a></p>
+
   <hr>
 
   <h2 id="h2">6. ハンズオン②：素材ショート</h2>
@@ -253,7 +279,27 @@
     <li>コストが<strong>ほぼ定額</strong>（無料API or 月額）→ 本数を増やしても安い</li>
     <li>同じ型で<strong>横展開しやすい</strong>（TOP5を別テーマで量産）</li>
   </ul>
-  <div class="warn">ライセンスは<strong>型ごと・素材ごと</strong>に違います。Pexels/Pixabay は寛容ですが、<strong>最終確認は人間</strong>。特に収益化・商用で使うなら、各サービスの利用規約をその都度チェック。</div>
+  <div class="warn">ライセンスは<strong>型ごと・素材ごと</strong>に違います。<a href="https://www.pexels.com/" target="_blank" rel="noopener">Pexels</a> / <a href="https://pixabay.com/" target="_blank" rel="noopener">Pixabay</a> は寛容ですが、<strong>最終確認は人間</strong>。特に収益化・商用で使うなら、各サービスの利用規約をその都度チェック。</div>
+
+  <h4>②の実例（クリックで再生）</h4>
+  <div class="gallery">
+    <a href="https://youtube.com/shorts/Xzgp2CSDewI" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/Xzgp2CSDewI/hqdefault.jpg" alt="外国人が驚く日本の技術 TOP5">
+      <span class="cap">外国人が驚く日本の技術 TOP5</span>
+      <span class="views">▶ 6,657 回</span>
+    </a>
+    <a href="https://youtube.com/shorts/p8Scy0yxVX8" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/p8Scy0yxVX8/hqdefault.jpg" alt="毒が強い動物 TOP5">
+      <span class="cap">毒が強い動物 TOP5、1位はハコクラゲ</span>
+      <span class="views">▶ 4,506 回</span>
+    </a>
+    <a href="https://youtube.com/shorts/Y6c2VfXo9P4" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/Y6c2VfXo9P4/hqdefault.jpg" alt="世界一大きい動物 TOP5">
+      <span class="cap">世界一大きい動物 TOP5（プロンプト例と同じ）</span>
+      <span class="views">▶ 3,469 回</span>
+    </a>
+  </div>
+  <p class="small">ストック実写＋アイコン＋字幕アニメ。出典：<a href="https://github.com/PeterTakahashi/claude-code-gen-shorts">claude-code-gen-shorts</a></p>
 
   <hr>
 
@@ -278,6 +324,26 @@
   <h4><span class="step">STEP 3</span>確認してから公開</h4>
   <p>出力は最初<strong>非公開</strong>で書き出し → <code>short.mp4</code> を確認してから公開判断、が安全です。</p>
   <div class="warn"><strong>権利の大前提：</strong>他人の動画を切り抜くには<strong>許諾が必要</strong>です。自分の動画、または許可・契約のある素材で行いましょう。</div>
+
+  <h4>③の実例（クリックで再生）</h4>
+  <div class="gallery">
+    <a href="https://youtube.com/shorts/V6Ji4VochMM" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/V6Ji4VochMM/hqdefault.jpg" alt="ひろゆき AIでエンジニアは失業しない">
+      <span class="cap">ひろゆき「AIでエンジニアは失業しません」</span>
+      <span class="views">▶ 5,623 回</span>
+    </a>
+    <a href="https://youtube.com/shorts/2PeL7StRkhM" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/2PeL7StRkhM/hqdefault.jpg" alt="ひろゆき 子供のゲーム課金">
+      <span class="cap">ひろゆき「子供のゲーム課金、親はこうしろ」</span>
+      <span class="views">▶ 4,452 回</span>
+    </a>
+    <a href="https://youtube.com/shorts/hsiryTT3U-s" target="_blank" rel="noopener">
+      <img src="https://img.youtube.com/vi/hsiryTT3U-s/hqdefault.jpg" alt="ひろゆき 少子化問題の正体">
+      <span class="cap">ひろゆき「今の少子化問題の正体」</span>
+      <span class="views">▶ 3,838 回</span>
+    </a>
+  </div>
+  <p class="small">長い対談から名場面を縦型＋字幕に。出典：<a href="https://github.com/PeterTakahashi/claude-code-clip-video">claude-code-clip-video</a></p>
   <p class="small">補足：このSkillには話者タイプ別の派生（<code>clipper-explainer</code>＝一人語り・講義向け、<code>clipper-qa</code>＝Q&A・質問コーナー向け）もあります。文字起こしには <code>OPENAI_API_KEY</code> が必要です。</p>
 
   <hr>
